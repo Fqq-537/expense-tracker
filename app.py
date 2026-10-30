@@ -16,16 +16,22 @@ import mimetypes
 import os
 import re
 import sqlite3
+import sys
 from datetime import date, datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
+from demo_data import seed as seed_demo_records
+
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
 DB_PATH = Path(os.environ.get("EXPENSE_DB", BASE_DIR / "app.db"))
-HOST = os.environ.get("HOST", "127.0.0.1")
 PORT = int(os.environ.get("PORT", "8000"))
+
+# 本地跑绑回环地址就够；被部署到容器时平台会注入 PORT，此时必须绑 0.0.0.0 才能被外部访问。
+# 想强制指定就设 HOST 环境变量。
+HOST = os.environ.get("HOST") or ("0.0.0.0" if os.environ.get("PORT") else "127.0.0.1")
 
 CATEGORIES = ["餐饮", "交通", "购物", "居住", "娱乐", "学习", "医疗", "其他"]
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
@@ -348,12 +354,35 @@ class Handler(BaseHTTPRequestHandler):
         print(f"[{self.log_date_time_string()}] {fmt % args}")
 
 
+def ensure_demo_data(enabled: bool) -> None:
+    """空库时灌一批演示数据，避免第一次打开看到一片空白。"""
+    if not enabled:
+        return
+    conn = connect()
+    try:
+        count = conn.execute("SELECT COUNT(*) FROM records").fetchone()[0]
+        if count:
+            return
+        inserted = seed_demo_records(conn)
+    except sqlite3.Error as exc:
+        print(f"演示数据写入失败，已跳过：{exc}")
+        return
+    finally:
+        conn.close()
+    print(f"空库，已写入 {inserted} 条演示数据（想要空白页请用 python app.py --empty）")
+
+
 def main() -> None:
     init_db()
+    ensure_demo_data(enabled="--empty" not in sys.argv)
+
     server = ThreadingHTTPServer((HOST, PORT), Handler)
     print("记账本已启动")
     print(f"  数据库：{DB_PATH}")
-    print(f"  打开浏览器访问 http://{HOST}:{PORT}")
+    if HOST in ("0.0.0.0", ""):
+        print(f"  监听 {HOST}:{PORT}（所有网卡），本机访问 http://127.0.0.1:{PORT}")
+    else:
+        print(f"  打开浏览器访问 http://{HOST}:{PORT}")
     print("  按 Ctrl + C 停止")
     try:
         server.serve_forever()

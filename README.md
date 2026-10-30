@@ -8,21 +8,28 @@
 
 ## 运行
 
+三步：
+
 ```bash
+git clone https://github.com/Fqq-537/expense-tracker.git
+cd expense-tracker
 python app.py
 ```
 
 然后浏览器打开 <http://127.0.0.1:8000>
 
+> Windows 上如果 `python` 没反应，换成 `py app.py`。
+> 已经有这个目录的话，前两行不用做，直接在目录里跑第三行。
+
 要求 Python 3.9 及以上（Windows / macOS / Linux 均可）。第一次启动会自动在项目目录创建 `app.db` 并建表。
 
-想看带数据的效果，可以先灌一批演示记录（当月 + 上月，约 100 条，固定随机种子可复现）：
+**如果库是空的，首次启动会自动写入一批演示数据**（当月 + 上月，约 100 条），这样打开就能看到图表效果。想从零开始记自己的账，加个参数：
 
 ```bash
-python seed_demo.py
+python app.py --empty
 ```
 
-不想跑也可以直接从空库开始，自己一条条记。
+也可以随时手动补数据：`python seed_demo.py`。
 
 想换端口：
 
@@ -46,7 +53,8 @@ $env:PORT=9000; python app.py  # Windows PowerShell
 ```
 expense-tracker/
 ├── app.py              # 后端：HTTP 路由 + REST API + SQLite 建表与查询
-├── seed_demo.py        # 可选：灌入一批演示数据
+├── demo_data.py        # 演示数据生成（固定随机种子）
+├── seed_demo.py        # 手动灌演示数据的命令行入口
 ├── static/
 │   ├── index.html      # 页面骨架
 │   ├── style.css       # 样式
