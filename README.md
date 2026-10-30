@@ -6,6 +6,9 @@
 
 > 不需要 `pip install` 任何东西，克隆下来一条命令就能跑。
 
+**在线演示**：<https://expense-tracker-24491.app.workbuddy.host/?sharecode=YKOZKDSERZ>
+浏览器直接打开就能用，不用装 Python（数据存在容器里，重启会回到初始演示数据）。
+
 ## 运行
 
 三步：
