@@ -1,0 +1,16 @@
+# 数据文件（首次运行自动生成）
+app.db
+app.db-wal
+app.db-shm
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# 编辑器
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

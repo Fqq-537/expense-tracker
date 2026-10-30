@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>记账本 · 月度开销看板</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="brand">
+        <h1>记账本</h1>
+        <p>记录每一笔支出，自动汇总当月开销</p>
+      </div>
+      <label class="month-pick">
+        <span>月份</span>
+        <input type="month" id="month" />
+      </label>
+    </header>
+
+    <section class="kpis">
+      <div class="kpi">
+        <span>本月支出</span>
+        <strong id="kpi-total">¥0.00</strong>
+      </div>
+      <div class="kpi">
+        <span>笔数</span>
+        <strong id="kpi-count">0</strong>
+      </div>
+      <div class="kpi">
+        <span>日均</span>
+        <strong id="kpi-avg">¥0.00</strong>
+        <em id="kpi-avg-note" class="muted"></em>
+      </div>
+      <div class="kpi">
+        <span>最大单笔</span>
+        <strong id="kpi-max">¥0.00</strong>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="card">
+        <h2>记一笔</h2>
+        <form id="form" class="entry-form">
+          <label>
+            日期
+            <input type="date" id="f-date" required />
+          </label>
+          <label>
+            金额
+            <input type="number" id="f-amount" min="0.01" step="0.01" placeholder="0.00" required />
+          </label>
+          <label>
+            分类
+            <select id="f-category"></select>
+          </label>
+          <label>
+            备注
+            <input type="text" id="f-note" maxlength="40" placeholder="可选，如：午饭" />
+          </label>
+          <button type="submit" class="primary">添加记录</button>
+        </form>
+        <p id="hint" class="hint" role="status"></p>
+      </section>
+
+      <section class="card">
+        <h2>分类占比</h2>
+        <div id="cat-chart" class="bars"></div>
+      </section>
+    </div>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>每日支出</h2>
+        <span class="muted" id="day-hint"></span>
+      </div>
+      <div id="day-chart" class="columns"></div>
+      <div id="day-axis" class="axis"></div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>明细</h2>
+        <span class="muted" id="list-meta"></span>
+      </div>
+      <ul id="list" class="records"></ul>
+    </section>
+
+    <footer class="foot">
+      零依赖全栈示例 · Python 标准库 + SQLite + 原生前端
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
